@@ -1,8 +1,9 @@
-interface MarkerOptions {
+export interface MarkerOptions {
   location: {
     lat: number;
     lng: number;
   };
+  markerContent(): string;
 }
 
 export class CustomMap {
@@ -19,12 +20,18 @@ export class CustomMap {
   }
 
   addMarker(options: MarkerOptions): void {
-    new google.maps.Marker({
+    const marker = new google.maps.Marker({
       map: this.googleMap,
       position: {
         lat: options.location.lat,
         lng: options.location.lng,
       },
+    });
+    marker.addListener("click", () => {
+      const infoWindow = new google.maps.InfoWindow({
+        content: options.markerContent(),
+      });
+      infoWindow.open(this.googleMap, marker);
     });
   }
 }
